@@ -1,1 +1,4 @@
 *.so
+*.o
+programa_gdb
+.gdb_history
