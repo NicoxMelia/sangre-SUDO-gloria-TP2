@@ -4,7 +4,7 @@ PY_DIR := src/python
 
 ASM_SRC := $(ASM_DIR)/calc.asm
 C_SRC := $(C_DIR)/receiver.c
-C_TEST_SRC := $(ASM_DIR)/main_test.c
+C_TEST_SRC := $(C_DIR)/main_test.c
 
 ASM_OBJ := converter.o
 SO_LIB := libgini.so
