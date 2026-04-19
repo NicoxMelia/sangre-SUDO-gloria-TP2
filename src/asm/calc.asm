@@ -30,3 +30,4 @@ process_value:
     ; ---------------------------------------------------------
     pop rbp                    ; Restauramos el puntero base original de C
     ret                        ; Volvemos al programa en C
+    section .note.GNU-stack noalloc noexec nowrite progbits
