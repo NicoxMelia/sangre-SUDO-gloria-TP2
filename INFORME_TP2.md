@@ -1,15 +1,5 @@
 # Trabajo Práctico N°2 — Cálculos en Ensamblador con Capas Python/C
 
-## Información del Grupo
-
-| Campo | Detalle |
-|---|---|
-| Repositorio | sangre-SUDO-gloria-TP2 |
-| Rama principal | main |
-| Último commit | `ff3c73f` — feat: UI MVP implemented (Flask) |
-
----
-
 ## Descripción General
 
 El sistema implementa un pipeline de cuatro capas para obtener, procesar y visualizar el **Índice de Gini** de cualquier país desde la API REST del Banco Mundial:
@@ -176,16 +166,6 @@ if __name__ == "__main__":
     print(sample["rows"][:3])
 ```
 
-**Cambios respecto a la versión anterior:**
-- La URL ahora obtiene datos de **todos los países** (sin filtrar por Argentina en la query).
-- Se añadió `build_view_data(selected_country)` como punto de entrada único para Flask.
-- `normalize_data()` convierte los registros crudos al formato de tabla.
-- La ruta a `libgini.so` usa `os.path` para ser portable independientemente del directorio de trabajo.
-
-**Punto clave:** `ctypes.CDLL` carga la librería en tiempo de ejecución y garantiza que Python pase un `c_double` y reciba un `c_int`.
-
----
-
 ## Capa 2 — C: Puente hacia el Ensamblador
 
 **Archivo:** `src/c/receiver.c`
@@ -282,7 +262,7 @@ section .text
 
 process_value:
 
-    ; ── 1. PRÓLOGO — Creación del Stack Frame ──────────────────────────
+    ; ── 1. Creación del Stack Frame ──────────────────────────
     push rbp                ; Guarda el puntero base del llamador (C)
     mov  rbp, rsp           ; Establece el propio frame pointer
 
@@ -298,7 +278,7 @@ process_value:
     cvttsd2si eax, xmm0            ; double → int, resultado en EAX
     add eax, 1                     ; Aplica la conversión solicitada (+1)
 
-    ; ── 4. EPÍLOGO — Restauración y Retorno ───────────────────────────
+    ; ── 4. Restauración y Retorno ───────────────────────────
     pop rbp                        ; Restaura el frame pointer del llamador
     ret                            ; Retorna; el resultado entero está en EAX
 
@@ -608,28 +588,3 @@ El trabajo demuestra el uso correcto de las convenciones de llamado **System V A
 5. **Stack no ejecutable:** La sección `.note.GNU-stack` marca la pila como no ejecutable, cumpliendo con las buenas prácticas de seguridad ELF64.
 
 ---
-
-## Estructura del Repositorio
-
-```
-sangre-SUDO-gloria-TP2/
-├── Makefile
-├── .gitignore
-├── INFORME_TP2.md           ← este archivo
-├── src/
-│   ├── asm/
-│   │   └── calc.asm         ← rutina de cálculo en ensamblador x86-64
-│   ├── c/
-│   │   ├── receiver.c       ← wrapper C (puente Python ↔ ASM)
-│   │   └── main_test.c      ← harness de prueba para GDB
-│   └── python/
-│       ├── api.py           ← cliente REST + orquestador + lógica de datos
-│       └── view.py          ← servidor Flask (UI web)
-├── src/templates/
-│   └── index.html           ← template Jinja2 (tabla + filtro por país)
-└── src/static/
-    ├── css/
-    │   └── styles.css       ← diseño con variables CSS y gradiente
-    └── js/
-        └── app.js           ← (sin lógica client-side; todo es server-side)
-```
