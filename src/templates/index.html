@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>Gini Index Explorer</title>
+		<link
+			href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+			rel="stylesheet"
+			integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+			crossorigin="anonymous"
+		/>
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap"
+			rel="stylesheet"
+		/>
+		<link rel="stylesheet" href="/static/css/styles.css" />
+	</head>
+	<body>
+		<div class="page">
+			<header class="py-5">
+				<div class="container">
+					<div class="hero-card">
+						<div class="hero-text">
+							<p class="eyebrow">World Bank Data</p>
+							<h1 class="display-5 fw-semibold">Gini Index Explorer</h1>
+							<p class="lead">
+								Browse inequality data by country and year. The table updates instantly when you
+								select a country from the list.
+							</p>
+						</div>
+						<div class="hero-chip">
+							<span class="chip-title">Coverage</span>
+							<span class="chip-value">2011 - 2020</span>
+						</div>
+					</div>
+				</div>
+			</header>
+
+			<main class="pb-5">
+				<div class="container">
+					<div class="controls-card">
+						<div>
+							<h2 class="h5 mb-1">Filter by Country</h2>
+							<p class="text-muted mb-0">
+								Select a country to view its Gini index history. Missing values are shown as
+								<strong>Unknown</strong>.
+							</p>
+						</div>
+						<div class="select-wrapper">
+							<form method="get">
+								<select
+									id="countrySelect"
+									name="country"
+									class="form-select"
+									aria-label="Select country"
+									onchange="this.form.submit()"
+								>
+									<option value="" {% if not selected_country %}selected{% endif %}>
+										All countries
+									</option>
+									{% for country in countries %}
+										<option value="{{ country }}" {% if country == selected_country %}selected{% endif %}>
+											{{ country }}
+										</option>
+									{% endfor %}
+								</select>
+							</form>
+							<span class="select-caption" id="countryCount">
+								{{ countries | length }} countries available
+							</span>
+						</div>
+					</div>
+
+					<div class="data-card mt-4">
+						<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2">
+							<div>
+								<h3 class="h5 mb-1">Gini Index Table</h3>
+								<p class="text-muted mb-0" id="statusText">{{ status_text }}</p>
+							</div>
+							<div class="stats">
+								<div class="stat">
+									<span class="stat-label">Total records</span>
+									<span class="stat-value" id="totalCount">{{ total_count }}</span>
+								</div>
+								<div class="stat">
+									<span class="stat-label">Shown</span>
+									<span class="stat-value" id="filteredCount">{{ filtered_count }}</span>
+								</div>
+							</div>
+						</div>
+
+						<div class="table-responsive mt-3">
+							<table class="table table-hover align-middle" id="giniTable">
+								<thead>
+									<tr>
+										<th scope="col">Year</th>
+										<th scope="col">Gini Index</th>
+										<th scope="col">Country</th>
+										<th scope="col">ISO3</th>
+										<th scope="col">Indicator</th>
+									</tr>
+								</thead>
+								<tbody id="dataTableBody">
+									{% for item in rows %}
+										<tr>
+											<td>{{ item.year }}</td>
+											<td>{{ item.display_value }}</td>
+											<td>{{ item.country }}</td>
+											<td>{{ item.iso3 }}</td>
+											<td>{{ item.indicator }}</td>
+										</tr>
+									{% endfor %}
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</main>
+		<script src="/static/js/app.js"></script>
+	</body>
+</html>

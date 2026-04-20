@@ -10,7 +10,7 @@ ASM_OBJ := converter.o
 SO_LIB := libgini.so
 GDB_EXEC := programa_gdb
 
-.PHONY: all clean run debug run-debug
+.PHONY: all clean run debug run-debug run_flask
 
 all: $(SO_LIB)
 
@@ -34,6 +34,9 @@ run-debug: debug
 
 run: $(SO_LIB)
 	python3 $(PY_DIR)/api.py
+
+run_flask: $(SO_LIB)
+	python3 $(PY_DIR)/view.py
 
 # Se agregó la eliminación del ejecutable de prueba
 clean:
