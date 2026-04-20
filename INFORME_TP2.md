@@ -13,38 +13,8 @@ El sistema implementa un pipeline de cuatro capas para obtener, procesar y visua
 
 ## Arquitectura y Flujo de Datos
 
-```
-┌─────────────────────────────────────────────────────┐
-│  CAPA 0 — Flask UI (src/python/view.py)             │
-│  • Servidor HTTP en puerto 5000                     │
-│  • GET /?country=X → render index.html             │
-│  • Llama a api.build_view_data()                    │
-└────────────────────┬────────────────────────────────┘
-                     │ Python function call
-┌────────────────────▼────────────────────────────────┐
-│  CAPA 1 — Python (src/python/api.py)                │
-│  • HTTP GET → API REST Banco Mundial (todos los     │
-│    países 2011-2020)                                │
-│  • Filtra, normaliza y procesa via ctypes           │
-│  • Expone build_view_data(country) al servidor      │
-└────────────────────┬────────────────────────────────┘
-                     │ ctypes → lib.get_value_processed(double)
-┌────────────────────▼────────────────────────────────┐
-│  CAPA 2 — C (src/c/receiver.c)                      │
-│  • get_value_processed(double value)                │
-│  • Llama a process_value() con 9 parámetros         │
-│    (8 dummies para agotar XMM0–XMM7)               │
-└────────────────────┬────────────────────────────────┘
-                     │ call → process_value (stack)
-┌────────────────────▼────────────────────────────────┐
-│  CAPA 3 — Ensamblador (src/asm/calc.asm)            │
-│  • Lee el 9.º parámetro desde [rbp+16]              │
-│  • Trunca double → int (cvttsd2si)                  │
-│  • Suma 1 y retorna en eax                          │
-└─────────────────────────────────────────────────────┘
-```
+<img width="1120" height="1600" alt="image" src="https://github.com/user-attachments/assets/45a4692f-e58c-4218-b1c1-06e6a2065ff2" />
 
----
 
 ## Capa 1 — Python: Consulta REST y Orquestación
 
