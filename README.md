@@ -242,7 +242,6 @@ process_value:
     ; Offset: 8 bytes (old rbp) + 8 bytes (return addr) = 16
     movsd xmm0, qword [rbp + 16]   ; Carga el double de 8 bytes en XMM0
 
-    ; ── 3. CÁLCULO Y CONVERSIÓN ────────────────────────────────────────
     ; cvttsd2si:trunca (no redondea) hacia cero.
     cvttsd2si eax, xmm0            ; double → int, resultado en EAX
     add eax, 1                     ; Aplica la conversión solicitada (+1)
