@@ -232,23 +232,21 @@ section .text
 
 process_value:
 
-    ; ── 1. Creación del Stack Frame ──────────────────────────
+    
     push rbp                ; Guarda el puntero base del llamador (C)
     mov  rbp, rsp           ; Establece el propio frame pointer
 
-    ; ── 2. LECTURA DEL PARÁMETRO DESDE LA PILA ─────────────────────────
+    
     ; Los primeros 8 argumentos flotantes ya ocuparon XMM0–XMM7.
     ; El 9.º (value9, el Gini real) quedó en el stack.
     ; Offset: 8 bytes (old rbp) + 8 bytes (return addr) = 16
     movsd xmm0, qword [rbp + 16]   ; Carga el double de 8 bytes en XMM0
 
     ; ── 3. CÁLCULO Y CONVERSIÓN ────────────────────────────────────────
-    ; cvttsd2si: Convert with Truncation Scalar Double-precision to
-    ;            Signed Integer — trunca (no redondea) hacia cero.
+    ; cvttsd2si:trunca (no redondea) hacia cero.
     cvttsd2si eax, xmm0            ; double → int, resultado en EAX
     add eax, 1                     ; Aplica la conversión solicitada (+1)
 
-    ; ── 4. Restauración y Retorno ───────────────────────────
     pop rbp                        ; Restaura el frame pointer del llamador
     ret                            ; Retorna; el resultado entero está en EAX
 
